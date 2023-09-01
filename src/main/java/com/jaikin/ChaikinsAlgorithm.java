@@ -28,6 +28,10 @@ public class ChaikinsAlgorithm extends Application {
 
     private List<Point> points = new ArrayList<>();
 
+    private Point draggedPoint;
+
+    private boolean dragging = false;
+
     private boolean running = false;
 
     private boolean showMessage = false;
@@ -51,6 +55,14 @@ public class ChaikinsAlgorithm extends Application {
         double getY() {
             return this.y;
         }
+
+        void setX(double x) {
+            this.x = x;
+        }
+
+        void setY(double y) {
+            this.y = y;
+        }
     }
 
     public static void main(String[] args) {
@@ -72,8 +84,36 @@ public class ChaikinsAlgorithm extends Application {
                     showMessage = false;
                     clearCanvas();
                 }
-                points.add(new Point(event.getX(), event.getY()));
-                drawPoint(event.getX(), event.getY());
+
+                for (Point point: points) {
+                    double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
+                    if (distance <= 5) {
+                        dragging = true;
+                        draggedPoint = point;
+                        break;
+                    }
+                }
+
+                if (!dragging && draggedPoint == null) {
+                    points.add(new Point(event.getX(), event.getY()));
+                    drawPoint(event.getX(), event.getY());
+                }
+            }
+        });
+
+        canvas.setOnMouseDragged(event -> {
+            if (!running && dragging && draggedPoint != null) {
+                clearCanvas();
+                draggedPoint.setX(event.getX());
+                draggedPoint.setY(event.getY());
+                drawPoints();
+            }
+        });
+
+        canvas.setOnMouseReleased(event -> {
+            if (!running) {
+                dragging = false;
+                draggedPoint = null;
             }
         });
 
@@ -124,7 +164,7 @@ public class ChaikinsAlgorithm extends Application {
     }
 
     private void drawPoints() {
-        for (Point point: points) {
+        for (Point point: originalPoints) {
             drawPoint(point.getX(), point.getY());
         }
     }
@@ -135,6 +175,10 @@ public class ChaikinsAlgorithm extends Application {
     }
 
     private void drawLines() {
+        Point firstPoint = originalPoints.get(0);
+        Point lastPoint = originalPoints.get(originalPoints.size() - 1);
+        drawLine(firstPoint, points.get(0));
+        drawLine(lastPoint, points.get(points.size() - 1));
         for (int i = 0; i < points.size() - 1; i++) {
             Point p1 = points.get(i);
             Point p2 = points.get(i + 1);
