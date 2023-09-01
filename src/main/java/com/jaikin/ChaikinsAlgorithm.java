@@ -6,13 +6,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -24,6 +22,8 @@ public class ChaikinsAlgorithm extends Application {
 
     private GraphicsContext gc;
 
+    private Timeline timeline;
+
     private List<Point> originalPoints;
 
     private List<Point> points = new ArrayList<>();
@@ -32,13 +32,10 @@ public class ChaikinsAlgorithm extends Application {
 
     private boolean showMessage = false;
 
-    private Stage messageStage;
-
-    private Timeline timeline;
-
     private int step = 0;
 
-    private class Point {
+    private static class Point {
+
         double x;
         double y;
 
@@ -71,6 +68,10 @@ public class ChaikinsAlgorithm extends Application {
 
         canvas.setOnMouseClicked(event -> {
             if (!running) {
+                if (showMessage) {
+                    showMessage = false;
+                    clearCanvas();
+                }
                 points.add(new Point(event.getX(), event.getY()));
                 drawPoint(event.getX(), event.getY());
             }
@@ -81,12 +82,14 @@ public class ChaikinsAlgorithm extends Application {
         Scene scene = new Scene(root);
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER && !running) {
-                if (points.size() == 0 && !showMessage) {
+                if (points.isEmpty() && !showMessage) {
                     showMessage = true;
-                    showPopupMessage("Please add some point(s) to the canvas\n(Close this popup by clicking on it)");
-                } else {
+                    gc.setFill(Color.WHITE);
+                    gc.setFont(new Font(20));
+                    gc.fillText("Please add at least one point to this black board\n" +
+                            "(This message will disappear when you add a point)", 10, 30);
+                } else if (!showMessage) {
                     running = true;
-                    showMessage = false;
                     if (points.size() == 2) {
                         drawLine(points.get(0), points.get(1));
                     } else if (points.size() > 2) {
@@ -97,10 +100,6 @@ public class ChaikinsAlgorithm extends Application {
             } else if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.SHIFT) {
                 running = false;
                 showMessage = false;
-                if (messageStage != null) {
-                    messageStage.close();
-                    messageStage = null;
-                }
                 if (timeline != null) {
                     timeline.stop();
                 }
@@ -116,23 +115,6 @@ public class ChaikinsAlgorithm extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    private void showPopupMessage(String message) {
-        messageStage = new Stage();
-        messageStage.initStyle(StageStyle.UNDECORATED);
-        messageStage.initModality(Modality.APPLICATION_MODAL);
-
-        Label label = new Label(message);
-        label.setStyle("-fx-background-color: white; -fx-padding: 10px;");
-        label.setOnMouseClicked(event -> {
-            messageStage.close();
-            messageStage = null;
-            showMessage = false;
-        });
-
-        messageStage.setScene(new Scene(label, Color.TRANSPARENT));
-        messageStage.show();
     }
 
     private void drawPoint(double x, double y) {
