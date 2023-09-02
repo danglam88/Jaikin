@@ -20,7 +20,7 @@ public class ChaikinsAlgorithm extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
     private Timeline timeline;
-    private List<Point> originalPoints;
+    private List<Point> originalPoints = new ArrayList<>();
     private List<Point> points = new ArrayList<>();
     private Point draggedPoint;
     private boolean dragging = false;
@@ -69,11 +69,18 @@ public class ChaikinsAlgorithm extends Application {
                     showMessage = false;
                     clearCanvas();
                 }
-                points.add(new Point(event.getX(), event.getY()));
+                for (Point point: originalPoints) {
+                    // Calculates the distance using Euclidean distance formula to prevent overlapping points.
+                    double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
+                    if (distance <= 10) {
+                        return;
+                    }
+                }
+                originalPoints.add(new Point(event.getX(), event.getY()));
                 drawPoint(event.getX(), event.getY());
             } else {
                 for (Point point: originalPoints) {
-                    // Calculates the distande using Euclidean distance formula.
+                    // Calculates the distance using Euclidean distance formula to detect a dragging event.
                     double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
                     if (distance <= 5) {
                         dragging = true;
@@ -109,7 +116,7 @@ public class ChaikinsAlgorithm extends Application {
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER && !running) {
                 // if no points are clicked and message doesn't show already.
-                if (points.isEmpty() && !showMessage) {
+                if (originalPoints.isEmpty() && !showMessage) {
                     showMessage = true;
                     gc.setFill(Color.WHITE);
                     gc.setFont(new Font(20));
@@ -117,13 +124,13 @@ public class ChaikinsAlgorithm extends Application {
                     gc.fillText("Please add at least one point to this black board\n" +
                             "(This message will disappear when you add a point)", 10, 30);
                 } else if (!showMessage) {
+                    points = new ArrayList<>(originalPoints);
                     running = true;
                     // if there are 2 dots, simply connect them with a line.
                     if (points.size() == 2) {
                         drawLine(points.get(0), points.get(1));
                         // else store clicked points and animate 7-step animation.
                     } else if (points.size() > 2) {
-                        originalPoints = new ArrayList<>(points);
                         startAnimation();
                     }
                 }
@@ -140,7 +147,7 @@ public class ChaikinsAlgorithm extends Application {
                 } else if (event.getCode() == KeyCode.SHIFT) {
                     clearCanvas();
                     points = new ArrayList<>();
-                    originalPoints = null;
+                    originalPoints = new ArrayList<>();
                 }
             }
         });

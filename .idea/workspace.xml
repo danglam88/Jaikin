@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e4a6ae4f-2ae1-4a36-8103-4588bc77b89d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm$Point.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm$Point.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jaikin/ChaikinsAlgorithm.java" afterDir="false" />
     </list>
