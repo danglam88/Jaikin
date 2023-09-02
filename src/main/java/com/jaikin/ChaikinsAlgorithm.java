@@ -66,25 +66,32 @@ public class ChaikinsAlgorithm extends Application {
         canvas.setOnMouseClicked(event -> {
             if (!running) {
                 if (showMessage) {
+                    // clear message when user clicks on canvas.
                     showMessage = false;
                     clearCanvas();
                 }
                 for (Point point: originalPoints) {
                     // Calculates the distance using Euclidean distance formula to prevent overlapping points.
-                    double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
+                    double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2)
+                            + Math.pow(event.getY() - point.getY(), 2));
                     if (distance <= 10) {
                         return;
                     }
                 }
-                originalPoints.add(new Point(event.getX(), event.getY()));
-                drawPoint(event.getX(), event.getY());
+                if (event.getX() >= 5 && event.getX() <= canvas.getWidth() - 5 &&
+                        event.getY() >= 5 && event.getY() <= canvas.getHeight() - 5) {
+                    // Adds clicked point to original points and draw it.
+                    originalPoints.add(new Point(event.getX(), event.getY()));
+                    drawPoint(event.getX(), event.getY());
+                }
             }
         });
 
         canvas.setOnMousePressed(event -> {
             for (Point point: originalPoints) {
                 // Calculates the distance using Euclidean distance formula to detect a dragging event.
-                double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
+                double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2)
+                        + Math.pow(event.getY() - point.getY(), 2));
                 if (distance <= 5) {
                     dragging = true;
                     draggedPoint = point;
@@ -94,7 +101,9 @@ public class ChaikinsAlgorithm extends Application {
         });
 
         canvas.setOnMouseDragged(event -> {
-            if (dragging && draggedPoint != null) {
+            if (dragging && draggedPoint != null && event.getX() >= 5 && event.getX() <= canvas.getWidth() - 5
+                    && event.getY() >= 5 && event.getY() <= canvas.getHeight() - 5) {
+                // Updates the dragged point and redraws the canvas.
                 draggedPoint.setX(event.getX());
                 draggedPoint.setY(event.getY());
                 clearCanvas();
@@ -107,6 +116,7 @@ public class ChaikinsAlgorithm extends Application {
 
         canvas.setOnMouseReleased(event -> {
             if (dragging && draggedPoint != null) {
+                // Stops dragging.
                 dragging = false;
                 draggedPoint = null;
             }
@@ -137,6 +147,7 @@ public class ChaikinsAlgorithm extends Application {
                     }
                 }
             } else if (event.getCode() == KeyCode.ESCAPE || event.getCode() == KeyCode.SHIFT) {
+                // stop animation and clear canvas and points.
                 running = false;
                 showMessage = false;
                 if (timeline != null) {
@@ -157,7 +168,7 @@ public class ChaikinsAlgorithm extends Application {
         primaryStage.show();
     }
 
-    // Draw one point
+    // Draw one point.
     private void drawPoint(double x, double y) {
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1.0);
@@ -177,12 +188,14 @@ public class ChaikinsAlgorithm extends Application {
         gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
-    // Call drawLine to connect all points.
+    // Call drawLines to connect all points.
     private void drawLines() {
+        // Connect first and last point to prevent gaps.
         Point firstPoint = originalPoints.get(0);
         Point lastPoint = originalPoints.get(originalPoints.size() - 1);
         drawLine(firstPoint, points.get(0));
         drawLine(lastPoint, points.get(points.size() - 1));
+        // Connect all points.
         for (int i = 0; i < points.size() - 1; i++) {
             Point p1 = points.get(i);
             Point p2 = points.get(i + 1);
