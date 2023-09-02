@@ -69,9 +69,11 @@ public class ChaikinsAlgorithm extends Application {
                     showMessage = false;
                     clearCanvas();
                 }
-
-                for (Point point: points) {
-                    // Calculates the distande using Euclidean distance formula
+                points.add(new Point(event.getX(), event.getY()));
+                drawPoint(event.getX(), event.getY());
+            } else {
+                for (Point point: originalPoints) {
+                    // Calculates the distande using Euclidean distance formula.
                     double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
                     if (distance <= 5) {
                         dragging = true;
@@ -79,25 +81,23 @@ public class ChaikinsAlgorithm extends Application {
                         break;
                     }
                 }
-
-                if (!dragging && draggedPoint == null) {
-                    points.add(new Point(event.getX(), event.getY()));
-                    drawPoint(event.getX(), event.getY());
-                }
             }
         });
 
         canvas.setOnMouseDragged(event -> {
-            if (!running && dragging && draggedPoint != null) {
-                clearCanvas();
+            if (running && dragging && draggedPoint != null) {
+                points.get(points.indexOf(draggedPoint)).setX(event.getX());
+                points.get(points.indexOf(draggedPoint)).setY(event.getY());
                 draggedPoint.setX(event.getX());
                 draggedPoint.setY(event.getY());
+                clearCanvas();
                 drawPoints();
+                drawLines();
             }
         });
 
         canvas.setOnMouseReleased(event -> {
-            if (!running) {
+            if (running && dragging && draggedPoint != null) {
                 dragging = false;
                 draggedPoint = null;
             }
@@ -114,8 +114,8 @@ public class ChaikinsAlgorithm extends Application {
                     gc.setFill(Color.WHITE);
                     gc.setFont(new Font(20));
                     // display multiline string
-                    gc.fillText("""Please add at least one point to this black board
-                    (This message will disappear when you add a point)""", 10, 30);
+                    gc.fillText("Please add at least one point to this black board\n" +
+                            "(This message will disappear when you add a point)", 10, 30);
                 } else if (!showMessage) {
                     running = true;
                     // if there are 2 dots, simply connect them with a line.
@@ -199,7 +199,7 @@ public class ChaikinsAlgorithm extends Application {
                 // Connect current points with lines.
                 drawLines();
 
-                // Implement Chaikins algorithm by clearing newpoints and set them to 1/4 and 3/4 between all previous points.
+                // Implement Chaikins algorithm by clearing new points and set them to 1/4 and 3/4 between all previous points.
                 List<Point> newPoints = new ArrayList<>();
                 // for all points in previous points
                 for (int i = 0; i < points.size() - 1; i++) {
@@ -219,7 +219,7 @@ public class ChaikinsAlgorithm extends Application {
                 points = newPoints;
                 step++;
             } else {
-                // Start the animation again by resetting steps and clearing points.
+                // Start the animation again by resetting steps and setting points to clicked points.
                 step = 0;
                 points = new ArrayList<>(originalPoints);
             }
