@@ -78,33 +78,35 @@ public class ChaikinsAlgorithm extends Application {
                 }
                 originalPoints.add(new Point(event.getX(), event.getY()));
                 drawPoint(event.getX(), event.getY());
-            } else {
-                for (Point point: originalPoints) {
-                    // Calculates the distance using Euclidean distance formula to detect a dragging event.
-                    double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
-                    if (distance <= 5) {
-                        dragging = true;
-                        draggedPoint = point;
-                        break;
-                    }
+            }
+        });
+
+        canvas.setOnMousePressed(event -> {
+            for (Point point: originalPoints) {
+                // Calculates the distance using Euclidean distance formula to detect a dragging event.
+                double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2) + Math.pow(event.getY() - point.getY(), 2));
+                if (distance <= 5) {
+                    dragging = true;
+                    draggedPoint = point;
+                    break;
                 }
             }
         });
 
         canvas.setOnMouseDragged(event -> {
-            if (running && dragging && draggedPoint != null) {
-                points.get(points.indexOf(draggedPoint)).setX(event.getX());
-                points.get(points.indexOf(draggedPoint)).setY(event.getY());
+            if (dragging && draggedPoint != null) {
                 draggedPoint.setX(event.getX());
                 draggedPoint.setY(event.getY());
                 clearCanvas();
                 drawPoints();
-                drawLines();
+                if (running) {
+                    drawLines();
+                }
             }
         });
 
         canvas.setOnMouseReleased(event -> {
-            if (running && dragging && draggedPoint != null) {
+            if (dragging && draggedPoint != null) {
                 dragging = false;
                 draggedPoint = null;
             }
