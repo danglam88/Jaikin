@@ -15,13 +15,11 @@ This is a Java project that implements the Chaikins algorithm by creating a step
 
 The application contains a canvas that allows users to add control points by clicking on the canvas.
 
-The application will then draw lines connecting all the control points.
-
 When the user presses the `Enter` key, the application will start the Chaikins algorithm animation.
 
 The animation will run through 7 steps of the Chaikins algorithm, with each step taking 0.5 seconds.
 
-After that, the animation will restart from the beginning (step 1).
+After that, the animation will restart from the beginning (step 1) and continue until the user presses the `Shift` or `Esc` key.
 
 ## Installation
 
