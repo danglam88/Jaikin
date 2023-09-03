@@ -78,6 +78,7 @@ public class ChaikinsAlgorithm extends Application {
                         return;
                     }
                 }
+                // Makes sure that the added point is not out of the canvas borders.
                 if (event.getX() >= 5 && event.getX() <= canvas.getWidth() - 5 &&
                         event.getY() >= 5 && event.getY() <= canvas.getHeight() - 5) {
                     // Adds clicked point to original points and draw it.
@@ -101,8 +102,19 @@ public class ChaikinsAlgorithm extends Application {
         });
 
         canvas.setOnMouseDragged(event -> {
+            // Makes sure that the dragged point is not out of the canvas borders.
             if (dragging && draggedPoint != null && event.getX() >= 5 && event.getX() <= canvas.getWidth() - 5
                     && event.getY() >= 5 && event.getY() <= canvas.getHeight() - 5) {
+                for (Point point: originalPoints) {
+                    if (draggedPoint != point) {
+                        // Calculates the distance using Euclidean distance formula to prevent overlapping points.
+                        double distance = Math.sqrt(Math.pow(event.getX() - point.getX(), 2)
+                                + Math.pow(event.getY() - point.getY(), 2));
+                        if (distance <= 10) {
+                            return;
+                        }
+                    }
+                }
                 // Updates the dragged point and redraws the canvas.
                 draggedPoint.setX(event.getX());
                 draggedPoint.setY(event.getY());
@@ -241,7 +253,7 @@ public class ChaikinsAlgorithm extends Application {
                 points = newPoints;
                 step++;
             } else {
-                // Start the animation again by resetting steps and setting points to clicked points.
+                // Start the animation again by resetting step and setting points to clicked points.
                 step = 0;
                 points = new ArrayList<>(originalPoints);
             }

@@ -7,7 +7,7 @@
 - [Usage](#usage)
 - [License](#license)
 - [Contributing](#contributing)
-- [Author](#author)
+- [Authors](#authors)
 
 ## Description
 
@@ -68,7 +68,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 
 Contributions are welcome. Please open an issue or submit a pull request if you would like to help improving the project.
 
-## Author
+## Authors
 
 - [Danglam](https://github.com/danglam88)
 - [JacobP](https://github.com/Jacobpes)
